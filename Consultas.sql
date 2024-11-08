@@ -272,26 +272,66 @@ where ce.anyo_inicio = '2017' and ce.anyo_fin = '2018';
 select * from alumno where sexo='M';
 
 -- Calcula cuántos alumnos nacieron en 1999
-select * from alumno;
 select * from alumno where year(fecha_nacimiento)=1999;
-select count(*) from alumno where year(fecha_nacimiento)=1999;
+
 -- Calcula cuántos profesores hay en cada departamento. El resultado sólo debe mostrar dos columnas, una con el nombre del departamento y otra con el número de profesores que hay en ese departamento. 
 -- El resultado sólo debe incluir los departamentos que tienen profesores asociados y deberá estar ordenado de mayor a menor por el número de profesores.
+select nombre, id_departamento
+from profesor
+order by id_departamento asc;
 
 -- Devuelve un listado con todos los departamentos y el número de profesores que hay en cada uno de ellos. Tenga en cuenta que pueden existir departamentos que no tienen profesores asociados. 
 -- Estos departamentos también tienen que aparecer en el listado.
+select profesor.nombre, 
+	departamento.id as id_departamento, 
+    departamento.nombre as nombre_departamento
+from profesor
+inner join departamento on profesor.id_departamento = departamento.id;
 
 -- Devuelve un listado con el nombre de todos los grados existentes en la base de datos y el número de asignaturas que tiene cada uno. Tenga en cuenta que pueden existir grados que no tienen asignaturas asociadas. 
 -- Estos grados también tienen que aparecer en el listado. El resultado deberá estar ordenado de mayor a menor por el número de asignaturas.
+select grado.nombre as nombre_grado, 
+	asignatura.nombre as nombre_asignatura, 
+    asignatura.id_grado as grado_asignatura 
+from grado
+left join asignatura on grado.id = asignatura.id_grado
+order by grado_asignatura asc;
 
 -- Devuelve un listado con el nombre de todos los grados existentes en la base de datos y el número de asignaturas que tiene cada uno, de los grados que tengan más de 40 asignaturas asociadas
+select grado.nombre as nombre_grado, 
+	asignatura.nombre as nombre_asignatura, 
+    asignatura.id_grado as grado_asignatura 
+from grado
+left join asignatura on grado.id = asignatura.id_grado;
 
 -- Devuelve un listado que muestre el nombre de los grados y la suma del número total de créditos que hay para cada tipo de asignatura. El resultado debe tener tres columnas: nombre del grado, 
 -- tipo de asignatura y la suma de los créditos de todas las asignaturas que hay de ese tipo. Ordene el resultado de mayor a menor por el número total de crédidos.
+select grado.nombre as nombre, 
+	asignatura.nombre as asignatura, 
+    asignatura.creditos, sum(asignatura.creditos) over(partition by grado.id) as total_creditos
+from grado
+left join asignatura on grado.id = asignatura.id_grado
+order by total_creditos desc;
 
 -- Devuelve un listado que muestre cuántos alumnos se han matriculado de alguna asignatura en cada uno de los cursos escolares. 
 -- El resultado deberá mostrar dos columnas, una columna con el año de inicio del curso escolar y otra con el número de alumnos matriculados.
+select curso_escolar.anyo_inicio as inicio,
+	count(distinct alumno_se_matricula_asignatura.id_alumno) as alumnos
+from curso_escolar
+left join alumno_se_matricula_asignatura on curso_escolar.id = alumno_se_matricula_asignatura.id_asignatura
+group by curso_escolar.anyo_inicio
+order by curso_escolar.anyo_inicio;
 
 -- Devuelve un listado con el número de asignaturas que imparte cada profesor. El listado debe tener en cuenta aquellos profesores que no imparten ninguna asignatura. El resultado mostrará cinco columnas: 
 -- id, nombre, primer apellido, segundo apellido y número de asignaturas. El resultado estará ordenado de mayor a menor por el número de asignaturas.
-
+select * from profesor;
+select * from asignatura;
+select profesor.id as id,
+	profesor.nombre as nombre,
+    profesor.apellido1 as primer_apellido,
+    profesor.apellido2 as segundo_apellido,
+    count(asignatura.id) as asignaturas
+from profesor
+left join asignatura on profesor.id = asignatura.id_profesor
+group by profesor.id
+order by asignaturas desc;
