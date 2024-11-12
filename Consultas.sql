@@ -410,3 +410,14 @@ select * from asignatura where id_profesor is null;
 
 -- Devuelve un listado con todos los departamentos que tienen alguna asignatura que no se haya impartido en ningún curso escolar. 
 -- El resultado debe mostrar el nombre del departamento y el nombre de la asignatura que no se haya impartido nunca
+select d.nombre as nombre_departamento,
+	   a.nombre as nombre_asignatura
+from departamento d
+left join asignatura on departamento
+left join curso_escolar on asignatura;
+
+describe asignatura;
+describe departamento;
+describe curso_escolar;
+describe alumno_se_matricula;
+select * from departamento;
